@@ -1,0 +1,1263 @@
+<!doctype html>
+<html lang="vi" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IELTS Vocabulary Game</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&amp;family=Quicksand:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+html, body { height: 100%; margin: 0; }
+* { font-family: 'Nunito', sans-serif; }
+.heading-font { font-family: 'Quicksand', sans-serif; }
+
+@keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 70% { transform: scale(1.1); } 100% { transform: scale(1); opacity: 1; } }
+@keyframes shake { 0%,100% { transform: translateX(0); } 20%,60% { transform: translateX(-8px); } 40%,80% { transform: translateX(8px); } }
+@keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+@keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+@keyframes confetti { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(-200px) rotate(720deg); opacity: 0; } }
+@keyframes confetti-burst { 0% { transform: translate(0,0) rotate(0deg); opacity: 1; } 100% { transform: translate(var(--tx),var(--ty)) rotate(720deg); opacity: 0; } }
+@keyframes streakFire { 0%,100% { transform: scale(1); } 50% { transform: scale(1.3); } }
+@keyframes correctGlow { 0% { box-shadow: 0 0 0 0 rgba(34,197,94,0.5); } 70% { box-shadow: 0 0 0 15px rgba(34,197,94,0); } 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); } }
+@keyframes wrongGlow { 0% { box-shadow: 0 0 0 0 rgba(239,68,68,0.5); } 70% { box-shadow: 0 0 0 15px rgba(239,68,68,0); } 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); } }
+@keyframes badgePop { 0% { transform: scale(0) rotate(-180deg); opacity: 0; } 60% { transform: scale(1.2) rotate(10deg); } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
+@keyframes wrongShake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-15px); } 75% { transform: translateX(15px); } }
+
+.anim-slide-up { animation: slideUp 0.5s ease-out forwards; }
+.anim-pop { animation: popIn 0.4s ease-out forwards; }
+.anim-shake { animation: shake 0.5s ease-out; }
+.anim-pulse { animation: pulse 2s ease-in-out infinite; }
+.anim-float { animation: float 3s ease-in-out infinite; }
+.anim-confetti { animation: confetti 1s ease-out forwards; }
+.anim-confetti-burst { animation: confetti-burst 1.2s ease-out forwards; }
+.anim-streak { animation: streakFire 0.5s ease-in-out; }
+.anim-correct-glow { animation: correctGlow 0.6s ease-out; }
+.anim-wrong-glow { animation: wrongGlow 0.6s ease-out; }
+.anim-badge { animation: badgePop 0.8s ease-out forwards; }
+.anim-wrong-shake { animation: wrongShake 0.6s ease-out; }
+
+.btn-option { transition: all 0.2s ease; }
+.btn-option:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+.btn-option:active:not(:disabled) { transform: translateY(0); }
+
+.progress-fill { transition: width 0.5s ease; }
+.score-pop { transition: transform 0.3s ease; }
+
+.glass-card {
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+.gradient-bg {
+  background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 30%, #e0f2fe 60%, #fdf2f8 100%);
+}
+
+.card-shadow { box-shadow: 0 4px 24px rgba(14,165,233,0.12), 0 1px 4px rgba(0,0,0,0.06); }
+
+.toast-enter { animation: slideUp 0.3s ease-out; }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #93c5fd; border-radius: 3px; }
+</style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full gradient-bg overflow-auto">
+  <div id="app" class="h-full w-full overflow-auto">
+    <!-- MAIN MENU BUTTON (Fixed, visible on all screens) -->
+    <button id="main-menu-btn" onclick="openMainMenu()" class="fixed top-4 left-4 z-40 bg-sky-500 hover:bg-sky-600 text-white font-700 px-4 py-2 rounded-lg shadow-lg transition-all hover:scale-105 active:scale-95 flex items-center gap-2">
+      <span>🏠</span> <span class="text-sm">Menu</span>
+    </button>
+
+    <!-- MAIN MENU SCREEN -->
+    <div id="screen-menu" class="min-h-full flex flex-col items-center justify-center p-4 hidden">
+      <div class="text-center anim-slide-up max-w-2xl w-full">
+        <div class="text-6xl mb-4 anim-float">🎮</div>
+        <h1 class="heading-font text-4xl md:text-5xl font-900 text-sky-800 mb-2">MAIN MENU</h1>
+        <p class="heading-font text-lg text-sky-600 mb-8 font-600">Chọn phần bạn muốn luyện tập</p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <!-- Phase 1 Button -->
+          <button onclick="selectPhase(0)" class="glass-card rounded-2xl p-6 card-shadow hover:shadow-xl transition-all hover:-translate-y-1 active:translate-y-0 text-left group">
+            <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">📝</div>
+            <h2 class="heading-font text-2xl font-800 text-sky-800 mb-1">Phần 1: Trắc nghiệm</h2>
+            <p class="text-sm text-sky-600 mb-3">Multiple Choice Questions</p>
+            <div class="flex items-center gap-2 text-xs text-sky-500">
+              <span>⭐</span> 30 câu hỏi
+            </div>
+            <div id="phase1-progress" class="mt-3 text-xs text-sky-400 hidden">Đã làm: <span id="phase1-count">0</span>/30</div>
+          </button>
+
+          <!-- Phase 2 Button -->
+          <button onclick="selectPhase(1)" class="glass-card rounded-2xl p-6 card-shadow hover:shadow-xl transition-all hover:-translate-y-1 active:translate-y-0 text-left group">
+            <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">✏️</div>
+            <h2 class="heading-font text-2xl font-800 text-sky-800 mb-1">Phần 2: Điền từ</h2>
+            <p class="text-sm text-sky-600 mb-3">Fill in the Blank</p>
+            <div class="flex items-center gap-2 text-xs text-sky-500">
+              <span>⭐</span> 30 câu hỏi
+            </div>
+            <div id="phase2-progress" class="mt-3 text-xs text-sky-400 hidden">Đã làm: <span id="phase2-count">0</span>/30</div>
+          </button>
+
+          <!-- Phase 3 Button -->
+          <button onclick="selectPhase(2)" class="glass-card rounded-2xl p-6 card-shadow hover:shadow-xl transition-all hover:-translate-y-1 active:translate-y-0 text-left group">
+            <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">🔀</div>
+            <h2 class="heading-font text-2xl font-800 text-sky-800 mb-1">Phần 3: Hỗn hợp</h2>
+            <p class="text-sm text-sky-600 mb-3">Mixed Questions</p>
+            <div class="flex items-center gap-2 text-xs text-sky-500">
+              <span>⭐</span> 25 câu hỏi
+            </div>
+            <div id="phase3-progress" class="mt-3 text-xs text-sky-400 hidden">Đã làm: <span id="phase3-count">0</span>/25</div>
+          </button>
+
+          <!-- Phase 4 Button -->
+          <button onclick="selectPhase(3)" class="glass-card rounded-2xl p-6 card-shadow hover:shadow-xl transition-all hover:-translate-y-1 active:translate-y-0 text-left group">
+            <div class="text-4xl mb-3 group-hover:scale-110 transition-transform">🏆</div>
+            <h2 class="heading-font text-2xl font-800 text-sky-800 mb-1">Phần 4: Tổng hợp</h2>
+            <p class="text-sm text-sky-600 mb-3">Comprehensive Review</p>
+            <div class="flex items-center gap-2 text-xs text-sky-500">
+              <span>⭐</span> 30 câu hỏi
+            </div>
+            <div id="phase4-progress" class="mt-3 text-xs text-sky-400 hidden">Đã làm: <span id="phase4-count">0</span>/30</div>
+          </button>
+        </div>
+
+        <div class="text-center space-y-2">
+          <button onclick="showScreen('screen-start')" class="text-sky-500 hover:text-sky-700 underline text-sm">← Quay lại</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- START SCREEN -->
+   <div id="screen-start" class="min-h-full flex flex-col items-center justify-center p-4">
+    <div class="text-center anim-slide-up max-w-lg w-full">
+     <div class="text-7xl mb-4 anim-float">
+      🧭
+     </div>
+     <h1 id="el-title" class="heading-font text-4xl md:text-5xl font-900 text-sky-800 mb-2">TỪ MỚI READING 1A</h1>
+     <p id="el-subtitle" class="heading-font text-lg text-sky-600 mb-8 font-600">Buổi 1 – Khám phá từ vựng IELTS Reading</p>
+     <div class="glass-card rounded-2xl p-6 card-shadow mb-8">
+      <div class="grid grid-cols-2 gap-3 text-sm">
+       <div class="flex items-center gap-2 text-sky-700">
+        <span class="text-xl">📝</span> 4 phần chơi
+       </div>
+       <div class="flex items-center gap-2 text-sky-700">
+        <span class="text-xl">📚</span> 25+ từ vựng
+       </div>
+       <div class="flex items-center gap-2 text-sky-700">
+        <span class="text-xl">🔥</span> Combo streak
+       </div>
+       <div class="flex items-center gap-2 text-sky-700">
+        <span class="text-xl">🏆</span> Xếp hạng
+       </div>
+      </div>
+     </div><button onclick="startGame()" class="bg-sky-500 hover:bg-sky-600 text-white font-700 text-lg px-10 py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 active:translate-y-0"> <span class="flex items-center gap-2 justify-center">🚀 BẮT ĐẦU KHÁM PHÁ</span> </button>
+     <div class="mt-6 flex justify-center gap-6 text-xs text-sky-500"><button onclick="showScreen('screen-menu')" class="hover:text-sky-700 underline">🎮 Menu chọn phần</button>
+      <button onclick="showScreen('screen-review')" class="hover:text-sky-700 underline">📖 Xem từ vựng</button>
+     </div>
+    </div>
+   </div><!-- GAME SCREEN -->
+   <div id="screen-game" class="min-h-full flex flex-col p-3 md:p-4 hidden"><!-- Top Bar -->
+    <div class="glass-card rounded-xl p-3 card-shadow mb-3 flex items-center justify-between flex-wrap gap-2">
+     <div class="flex items-center gap-3">
+      <button onclick="openMainMenu()" class="text-sky-500 hover:text-sky-700 p-1 font-700" title="Mở menu chính"><span class="text-sm">🏠 Menu</span></button>
+      <button onclick="showScreen('screen-start')" class="text-sky-500 hover:text-sky-700 p-1"><i data-lucide="arrow-left" style="width:20px;height:20px"></i></button>
+      <div>
+       <div id="phase-label" class="text-xs font-700 text-sky-400 uppercase tracking-wider">
+        Phần 1
+       </div>
+       <div id="question-counter" class="text-sm font-700 text-sky-800">
+        Câu 1/5
+       </div>
+      </div>
+     </div>
+     <div class="flex items-center gap-4">
+      <div class="flex items-center gap-1"><span id="streak-icon" class="text-lg">🔥</span> <span id="streak-count" class="font-800 text-orange-500">0</span>
+      </div>
+      <div class="flex items-center gap-1"><span>⭐</span> <span id="score-display" class="font-800 text-sky-700 score-pop">0</span>
+      </div>
+     </div>
+    </div><!-- Progress Bar -->
+    <div class="w-full bg-white/50 rounded-full h-2.5 mb-3 overflow-hidden">
+     <div id="progress-bar" class="h-full bg-gradient-to-r from-sky-400 to-pink-400 rounded-full progress-fill" style="width:0%"></div>
+    </div><!-- Question Area -->
+    <div id="question-area" class="flex-1 flex flex-col items-center justify-center max-w-2xl mx-auto w-full"><!-- Dynamically filled -->
+    </div><!-- Explanation Area -->
+    <div id="explanation-area" class="hidden max-w-2xl mx-auto w-full mt-3">
+    </div><!-- Next Button -->
+    <div id="next-btn-area" class="hidden text-center mt-3 mb-2 flex gap-2 justify-center">
+     <button onclick="retryQuestion()" id="retry-btn" class="bg-orange-500 hover:bg-orange-600 text-white font-700 px-6 py-3 rounded-xl shadow-md transition-all hover:-translate-y-0.5"> 🔄 Làm lại </button> <button onclick="nextQuestion()" class="bg-sky-500 hover:bg-sky-600 text-white font-700 px-8 py-3 rounded-xl shadow-md transition-all hover:-translate-y-0.5"> Tiếp theo → </button>
+    </div>
+   </div><!-- REVIEW SCREEN -->
+   <div id="screen-review" class="min-h-full flex flex-col p-4 hidden">
+    <div class="max-w-3xl mx-auto w-full">
+     <div class="flex items-center gap-3 mb-4">
+      <button onclick="openMainMenu()" class="text-sky-500 hover:text-sky-700 p-1 font-700 text-sm" title="Mở menu chính">🏠 Menu</button>
+      <button onclick="showScreen('screen-start')" class="text-sky-500 hover:text-sky-700 p-1"><i data-lucide="arrow-left" style="width:20px;height:20px"></i></button>
+      <h2 class="heading-font text-2xl font-800 text-sky-800">📖 Danh sách từ vựng</h2>
+     </div>
+     <div id="vocab-list" class="space-y-3"></div>
+     <div class="text-center mt-6 mb-4">
+      <button onclick="openMainMenu()" class="bg-sky-500 hover:bg-sky-600 text-white font-700 px-6 py-3 rounded-xl mr-2">🎮 Menu chọn phần</button>
+      <button onclick="showScreen('screen-start')" class="bg-white border-2 border-sky-300 text-sky-600 font-700 px-6 py-3 rounded-xl hover:bg-sky-50">← Quay lại</button>
+     </div>
+    </div>
+   </div><!-- RESULT SCREEN -->
+   <div id="screen-result" class="min-h-full flex flex-col items-center justify-center p-4 hidden">
+    <div id="result-content" class="text-center max-w-lg w-full anim-slide-up"></div>
+   </div><!-- FLASHCARD REVIEW (overlay) -->
+   <div id="flashcard-overlay" class="fixed inset-0 bg-black/40 flex items-center justify-center p-4 hidden z-50">
+    <div id="flashcard-content" class="glass-card rounded-2xl p-6 max-w-md w-full card-shadow anim-pop"></div>
+   </div><!-- Toast -->
+   <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
+  </div>
+  <script>
+// ===== VOCABULARY DATA (26 WORDS - COMPLETE) =====
+const VOCAB = [
+  // GROUP 1 - Hygiene & Sanitation (7 words)
+  { id:1, word:"hygiene", pos:"n", viMeaning:"vệ sinh (cá nhân), sạch sẽ", synonyms:["cleanliness","sanitation","purity"], wordFamily:["hygienic (adj)","hygienically (adv)","hygienic"], example:"Good personal hygiene prevents the spread of infections.", ipa:"/ˈhaɪ.dʒiːn/" },
+  { id:2, word:"personal hygiene", pos:"n", viMeaning:"vệ sinh cá nhân hàng ngày", synonyms:["self-care","personal cleanliness"], wordFamily:["hygiene (n)","hygienic (adj)"], example:"Personal hygiene includes brushing teeth and washing hands regularly.", ipa:"/ˈpɜː.sən.əl ˈhaɪ.dʒiːn/" },
+  { id:3, word:"poor sanitary conditions", pos:"n", viMeaning:"điều kiện vệ sinh tồi tàn", synonyms:["unhygienic environment","unsanitary state"], wordFamily:["sanitary (adj)","sanitation (n)"], example:"Poor sanitary conditions can lead to serious diseases.", ipa:"/pɔː ˈsæn.ɪ.ter.i kənˈdɪʃ.ənz/" },
+  { id:4, word:"drain", pos:"n", viMeaning:"cống, ống thoát nước", synonyms:["sewer","pipe","channel"], wordFamily:["drainage (n)","drained (adj)","drain (v)"], example:"The city's drains were blocked, causing flooding.", ipa:"/dreɪn/" },
+  { id:5, word:"down the drain", pos:"phrase", viMeaning:"lãng phí, mất đi vô ích", synonyms:["wasted","lost","squandered"], wordFamily:["drain (n/v)"], example:"All the government's efforts went down the drain.", ipa:"/daʊn ðə dreɪn/" },
+  { id:6, word:"mentally drained", pos:"adj", viMeaning:"kiệt sức về tinh thần", synonyms:["exhausted","fatigued","weary"], wordFamily:["drain (v)","drained (adj)"], example:"After the exam, students felt mentally drained.", ipa:"/ˈmen.təl.i dreɪnd/" },
+  { id:7, word:"physically drained", pos:"adj", viMeaning:"kiệt sức về thể chất", synonyms:["exhausted","tired","worn out"], wordFamily:["drain (v)","drained (adj)"], example:"The workers were physically drained after a long day.", ipa:"/ˈfɪz.ɪ.kə.li dreɪnd/" },
+  
+  // GROUP 2 - Complexity (3 words)
+  { id:8, word:"sophisticated", pos:"adj", viMeaning:"tinh tế, phức tạp, tiên tiến", synonyms:["advanced","complex","refined"], wordFamily:["sophistication (n)","sophisticate (v)","sophisticated"], example:"Modern cities rely on sophisticated infrastructure.", ipa:"/səˈfɪs.tɪ.keɪ.tɪd/" },
+  { id:9, word:"complex", pos:"adj", viMeaning:"phức tạp, gồm nhiều bộ phận", synonyms:["intricate","complicated","sophisticated"], wordFamily:["complexity (n)","complexly (adv)","complex"], example:"The drainage system was highly complex.", ipa:"/ˈkɒm.pleks/" },
+  { id:10, word:"intricate", pos:"adj", viMeaning:"phức tạp chi tiết, phiền phức", synonyms:["complex","complicated","detailed"], wordFamily:["intricacy (n)","intricately (adv)"], example:"The intricate design of the water system took years to develop.", ipa:"/ˈɪn.trɪ.kət/" },
+  
+  // GROUP 3 - People & Residence (7 words)
+  { id:11, word:"occupant", pos:"n", viMeaning:"cư dân, người ở, người chiếm dụng", synonyms:["resident","inhabitant","dweller"], wordFamily:["occupy (v)","occupation (n)","occupied (adj)"], example:"The occupants of the building were evacuated during the fire.", ipa:"/ˈɒk.jə.pənt/" },
+  { id:12, word:"resident", pos:"n", viMeaning:"cư dân, người cư trú", synonyms:["inhabitant","occupant","dweller"], wordFamily:["reside (v)","residential (adj)","residence (n)"], example:"The residents complained about poor water quality.", ipa:"/ˈrez.ɪ.dənt/" },
+  { id:13, word:"dweller", pos:"n", viMeaning:"cư dân, người sinh sống", synonyms:["resident","inhabitant","occupant"], wordFamily:["dwell (v)","dwelling (n)"], example:"City dwellers face many challenges related to sanitation.", ipa:"/ˈdwel.ər/" },
+  { id:14, word:"settler", pos:"n", viMeaning:"người định cư, người khai phá đất đai", synonyms:["colonist","pioneer","founder"], wordFamily:["settle (v)","settlement (n)","settled (adj)"], example:"Early settlers built the first drainage systems in the town.", ipa:"/ˈset.əl.ər/" },
+  { id:15, word:"inhabitant", pos:"n", viMeaning:"cư dân, người sinh sống ở một nơi", synonyms:["resident","dweller","occupant"], wordFamily:["inhabit (v)","inhabited (adj)"], example:"The inhabitants of rural areas often lack access to sanitation.", ipa:"/ɪnˈhæb.ɪ.tənt/" },
+  { id:16, word:"citizen", pos:"n", viMeaning:"công dân, thành viên của quốc gia", synonyms:["national","subject","resident"], wordFamily:["citizenship (n)","civic (adj)","citizen"], example:"Every citizen has the right to clean water.", ipa:"/ˈsɪt.ɪ.zən/" },
+  { id:17, word:"tenant", pos:"n", viMeaning:"người thuê nhà, người thuê tài sản", synonyms:["renter","lessee","lodger"], wordFamily:["tenancy (n)","tenanted (adj)","tenant"], example:"Tenants complained about the poor sanitation in the building.", ipa:"/ˈten.ənt/" },
+  
+  // GROUP 4 - Lifespan & Longevity (3 words)
+  { id:18, word:"life expectancy", pos:"n", viMeaning:"tuổi thọ trung bình, kỳ vọng sống", synonyms:["lifespan","longevity","expected years"], wordFamily:["life (n)","expect (v)","expectancy (n)"], example:"Life expectancy increased dramatically with better sanitation.", ipa:"/laɪf ɪkˈspek.tən.si/" },
+  { id:19, word:"lifespan", pos:"n", viMeaning:"tuổi thọ, thời gian sống hoặc tồn tại", synonyms:["life expectancy","lifetime","duration"], wordFamily:["life (n)","span (n)","lifespan"], example:"The lifespan of these pipes is about 50 years.", ipa:"/ˈlaɪf.spæn/" },
+  { id:20, word:"longevity", pos:"n", viMeaning:"sự trường thọ, sống lâu", synonyms:["long life","lifespan","durability"], wordFamily:["long (adj)","longevous (adj)"], example:"Improved sanitation contributed to human longevity.", ipa:"/lɒnˈdʒev.ə.ti/" },
+  
+  // GROUP 5 - Actions & Effects (5 words)
+  { id:21, word:"discharge", pos:"v", viMeaning:"xả, thải (nước, khí), phát thải", synonyms:["release","emit","expel"], wordFamily:["discharge (n)","discharged (adj)","discharge"], example:"Factories discharge waste into rivers daily.", ipa:"/dɪsˈtʃɑːdʒ/" },
+  { id:22, word:"dispose of", pos:"v", viMeaning:"vứt bỏ, loại bỏ, xử lý chất thải", synonyms:["discard","throw away","get rid of"], wordFamily:["disposal (n)","disposable (adj)","dispose"], example:"Waste must be disposed of properly to protect the environment.", ipa:"/dɪˈspəʊz ɒv/" },
+  { id:23, word:"discard", pos:"v", viMeaning:"bỏ đi, không sử dụng, vứt bỏ", synonyms:["dispose of","throw away","abandon"], wordFamily:["discard (n)","discarded (adj)"], example:"People should not discard plastic into waterways.", ipa:"/dɪsˈkɑːrd/" },
+  { id:24, word:"tremendous", pos:"adj", viMeaning:"to lớn, lớn lao, đáng kể", synonyms:["drastic","enormous","immense"], wordFamily:["tremendously (adv)","tremendous"], example:"Sanitation brought tremendous changes to urban life.", ipa:"/trɪˈmen.dəs/" },
+  { id:25, word:"drastic", pos:"adj", viMeaning:"to lớn, chủ yếu (thay đổi), căn bản", synonyms:["tremendous","dramatic","significant"], wordFamily:["drastically (adv)","drastic"], example:"There has been a drastic improvement in public health.", ipa:"/ˈdræs.tɪk/" },
+  
+  // GROUP 6 - Advanced Terms (5 words)
+  { id:26, word:"descendant", pos:"n", viMeaning:"hậu duệ, con cháu", synonyms:["offspring","heir","successor"], wordFamily:["descend (v)","descent (n)","descendant"], example:"The descendants of early settlers benefited from improved hygiene.", ipa:"/dɪˈsen.dənt/" },
+  { id:27, word:"crop yield", pos:"n", viMeaning:"năng suất hoa màu, sản lượng nông sản", synonyms:["harvest output","agricultural production","yield"], wordFamily:["crop (n)","yield (v/n)"], example:"Better irrigation increased crop yield significantly.", ipa:"/krɒp jiːld/" },
+  { id:28, word:"cannibalism", pos:"n", viMeaning:"sự ăn thịt đồng loại", synonyms:["anthropophagy"], wordFamily:["cannibal (n)","cannibalistic (adj)"], example:"Cannibalism was practiced in some ancient societies.", ipa:"/ˈkæn.ɪ.bəl.ɪ.zəm/" },
+  { id:29, word:"worst-case scenario", pos:"n", viMeaning:"trường hợp tệ nhất, kịch bản xấu nhất", synonyms:["worst outcome","most adverse situation"], wordFamily:["worst (adj)","case (n)","scenario (n)"], example:"In the worst-case scenario, thousands could lose access to clean water.", ipa:"/wɜːst keɪs sɪˈnɑː.ri.əʊ/" },
+  { id:30, word:"accelerate", pos:"v", viMeaning:"đẩy nhanh, thúc đẩy, tăng tốc", synonyms:["speed up","hasten","expedite"], wordFamily:["acceleration (n)","accelerated (adj)","accelerator (n)"], example:"Urbanization accelerated the need for better sanitation.", ipa:"/əkˈsel.ə.reɪt/" },
+];
+
+// ===== GAME STATE =====
+let state = {
+  phase: 0, // 0=P1, 1=P2, 2=P3, 3=P4
+  questionIndex: 0,
+  score: 0,
+  streak: 0,
+  maxStreak: 0,
+  correct: 0,
+  wrong: 0,
+  wrongWords: [],
+  answered: false,
+  questions: [],
+  totalQuestions: 0,
+  questionsAnswered: 0,
+  flashcardQueue: [],
+  flashcardShown: 0,
+};
+
+// ===== LOCALSTORAGE MANAGEMENT =====
+const STORAGE_KEY = 'ielts_game_state';
+const PHASES_PROGRESS_KEY = 'ielts_phases_progress';
+
+function saveGameState() {
+  const gameData = {
+    phase: state.phase,
+    questionIndex: state.questionIndex,
+    score: state.score,
+    streak: state.streak,
+    maxStreak: state.maxStreak,
+    correct: state.correct,
+    wrong: state.wrong,
+    wrongWords: state.wrongWords.map(w => w.id),
+    answered: state.answered,
+    totalQuestions: state.totalQuestions,
+    questionsAnswered: state.questionsAnswered,
+    timestamp: Date.now(),
+  };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(gameData));
+}
+
+function loadGameState() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    try {
+      const data = JSON.parse(saved);
+      state.phase = data.phase || 0;
+      state.questionIndex = data.questionIndex || 0;
+      state.score = data.score || 0;
+      state.streak = data.streak || 0;
+      state.maxStreak = data.maxStreak || 0;
+      state.correct = data.correct || 0;
+      state.wrong = data.wrong || 0;
+      state.wrongWords = (data.wrongWords || []).map(id => VOCAB.find(v => v.id === id)).filter(Boolean);
+      state.answered = data.answered || false;
+      state.totalQuestions = data.totalQuestions || 0;
+      state.questionsAnswered = data.questionsAnswered || 0;
+      return true;
+    } catch(e) {
+      console.error('Error loading game state:', e);
+      return false;
+    }
+  }
+  return false;
+}
+
+function savePhaseProgress() {
+  const progress = localStorage.getItem(PHASES_PROGRESS_KEY);
+  const phaseProgress = progress ? JSON.parse(progress) : { 0: 0, 1: 0, 2: 0, 3: 0 };
+  phaseProgress[state.phase] = state.questionsAnswered;
+  localStorage.setItem(PHASES_PROGRESS_KEY, JSON.stringify(phaseProgress));
+}
+
+function loadPhaseProgress() {
+  const progress = localStorage.getItem(PHASES_PROGRESS_KEY);
+  return progress ? JSON.parse(progress) : { 0: 0, 1: 0, 2: 0, 3: 0 };
+}
+
+function clearGameState() {
+  localStorage.removeItem(STORAGE_KEY);
+}
+
+function updateMenuProgress() {
+  const progress = loadPhaseProgress();
+  const phaseCounts = [30, 30, 25, 30];
+  
+  for (let i = 0; i < 4; i++) {
+    const progressEl = document.getElementById(`phase${i+1}-progress`);
+    const countEl = document.getElementById(`phase${i+1}-count`);
+    const count = progress[i] || 0;
+    
+    if (count > 0) {
+      progressEl.classList.remove('hidden');
+      countEl.textContent = count;
+    }
+  }
+}
+
+const PHASE_NAMES = ["Phần 1: Trắc nghiệm","Phần 2: Điền từ","Phần 3: Hỗn hợp","Phần 4: Tổng hợp"];
+const PHASE_ICONS = ["📝","✏️","🔀","🏆"];
+const PHASE_QUESTIONS = [30, 30, 25, 30]; // Number of questions per phase
+
+// ===== AUDIO (Web Audio API) =====
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function playCorrectSound() {
+  try {
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.connect(g); g.connect(audioCtx.destination);
+    o.type = 'sine'; o.frequency.setValueAtTime(523, audioCtx.currentTime);
+    o.frequency.setValueAtTime(659, audioCtx.currentTime + 0.1);
+    o.frequency.setValueAtTime(784, audioCtx.currentTime + 0.2);
+    g.gain.setValueAtTime(0.15, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+    o.start(); o.stop(audioCtx.currentTime + 0.4);
+  } catch(e) {}
+}
+
+function playWrongSound() {
+  try {
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.connect(g); g.connect(audioCtx.destination);
+    o.type = 'sawtooth'; o.frequency.setValueAtTime(200, audioCtx.currentTime);
+    o.frequency.setValueAtTime(150, audioCtx.currentTime + 0.15);
+    g.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+    o.start(); o.stop(audioCtx.currentTime + 0.3);
+  } catch(e) {}
+}
+
+function playStreakSound() {
+  try {
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.connect(g); g.connect(audioCtx.destination);
+    o.type = 'sine';
+    o.frequency.setValueAtTime(600, audioCtx.currentTime);
+    o.frequency.setValueAtTime(800, audioCtx.currentTime + 0.1);
+    o.frequency.setValueAtTime(1000, audioCtx.currentTime + 0.2);
+    o.frequency.setValueAtTime(1200, audioCtx.currentTime + 0.25);
+    g.gain.setValueAtTime(0.12, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+    o.start(); o.stop(audioCtx.currentTime + 0.4);
+  } catch(e) {}
+}
+
+// ===== PRONUNCIATION =====
+function speak(text) {
+  try {
+    if ('speechSynthesis' in window) {
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'en-US'; 
+      u.rate = 0.8;
+      u.pitch = 1;
+      u.volume = 1;
+      speechSynthesis.speak(u);
+    }
+  } catch(e) {}
+}
+
+// ===== CONFETTI EFFECT =====
+function createConfetti() {
+  const c = document.getElementById('question-area');
+  for (let i = 0; i < 30; i++) {
+    const confetti = document.createElement('div');
+    confetti.style.position = 'fixed';
+    confetti.style.width = '8px';
+    confetti.style.height = '8px';
+    confetti.style.left = (c.offsetLeft + c.offsetWidth/2) + 'px';
+    confetti.style.top = (c.offsetTop + c.offsetHeight/2) + 'px';
+    confetti.style.borderRadius = '50%';
+    const colors = ['#FFD700','#FF69B4','#00D4FF','#FF6B6B','#4ECDC4','#FFE66D'];
+    confetti.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
+    const angle = (Math.PI * 2 * i) / 30;
+    const velocity = 8 + Math.random() * 5;
+    const tx = Math.cos(angle) * velocity * 30;
+    const ty = Math.sin(angle) * velocity * 30 - 100;
+    confetti.style.setProperty('--tx', tx + 'px');
+    confetti.style.setProperty('--ty', ty + 'px');
+    confetti.classList.add('anim-confetti-burst');
+    document.body.appendChild(confetti);
+    setTimeout(() => confetti.remove(), 1200);
+  }
+}
+
+// ===== UTILITY =====
+function shuffle(arr) { const a = [...arr]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]; } return a; }
+function pick(arr, n) { return shuffle(arr).slice(0, n); }
+function showScreen(id) { 
+  document.querySelectorAll('#app > div[id^="screen-"]').forEach(el => el.classList.add('hidden')); 
+  document.getElementById(id).classList.remove('hidden'); 
+  if(id==='screen-review') renderVocabList();
+  if(id==='screen-menu') updateMenuProgress();
+  setTimeout(()=>lucide.createIcons(),50); 
+}
+
+function openMainMenu() {
+  savePhaseProgress();
+  showScreen('screen-menu');
+}
+
+function selectPhase(phaseNum) {
+  const savedProgress = loadPhaseProgress();
+  const questionsInPhase = PHASE_QUESTIONS[phaseNum];
+  const alreadyAnswered = savedProgress[phaseNum] || 0;
+  
+  if (alreadyAnswered > 0 && alreadyAnswered < questionsInPhase) {
+    // Ask user if they want to resume or restart
+    const resume = confirm(`Phần ${phaseNum + 1}: Bạn đã làm ${alreadyAnswered}/${questionsInPhase} câu.\n\nBấm OK để tiếp tục, hoặc Hủy để bắt đầu lại.`);
+    if (resume) {
+      resumePhase(phaseNum);
+    } else {
+      startPhase(phaseNum);
+    }
+  } else if (alreadyAnswered >= questionsInPhase) {
+    // Phase already completed
+    const restart = confirm(`Phần ${phaseNum + 1} đã hoàn thành!\n\nBấm OK để chơi lại, hoặc Hủy để chọn phần khác.`);
+    if (restart) {
+      startPhase(phaseNum);
+    }
+  } else {
+    // New phase
+    startPhase(phaseNum);
+  }
+}
+
+function startPhase(phaseNum) {
+  // Clear previous state and start fresh
+  state = {
+    phase: phaseNum,
+    questionIndex: 0,
+    score: 0,
+    streak: 0,
+    maxStreak: 0,
+    correct: 0,
+    wrong: 0,
+    wrongWords: [],
+    answered: false,
+    questions: [],
+    totalQuestions: 0,
+    questionsAnswered: 0,
+    flashcardQueue: [],
+    flashcardShown: 0,
+  };
+  generateCurrentPhaseQuestions();
+  showScreen('screen-game');
+  renderQuestion();
+  showToast(`${PHASE_ICONS[phaseNum]} ${PHASE_NAMES[phaseNum]}`, 'info');
+}
+
+function resumePhase(phaseNum) {
+  // Load saved state for this phase
+  if (loadGameState()) {
+    generateCurrentPhaseQuestions();
+    showScreen('screen-game');
+    renderQuestion();
+    showToast(`📖 Tiếp tục ${PHASE_NAMES[phaseNum]}`, 'info');
+  } else {
+    startPhase(phaseNum);
+  }
+}
+
+function showToast(msg, type='info') {
+  const c = document.getElementById('toast-container');
+  const colors = { success:'bg-emerald-500', error:'bg-red-500', info:'bg-sky-500', streak:'bg-orange-500' };
+  const t = document.createElement('div');
+  t.className = `${colors[type]||colors.info} text-white px-4 py-2 rounded-xl shadow-lg text-sm font-600 toast-enter`;
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(()=>{ t.style.opacity='0'; t.style.transition='opacity 0.3s'; setTimeout(()=>t.remove(),300); },2000);
+}
+
+// ===== QUESTION GENERATORS =====
+function generatePhase1Questions() {
+  // MCQ - Use ALL vocabulary words
+  return VOCAB.map(v => {
+    const distractors = shuffle(VOCAB.filter(x => x.id !== v.id)).slice(0, 3);
+    const options = shuffle([v, ...distractors]);
+    return { type:'mcq', vocab: v, question:`(${v.pos}) ${v.viMeaning}`, options: options.map(o=>o.word), answer: v.word };
+  });
+}
+
+function generatePhase2Questions() {
+  // Fill-in-the-blank - Use ALL vocabulary words
+  return VOCAB.map(v => ({
+    type:'fill', vocab: v, question:`(${v.pos}) ${v.viMeaning}`, answer: v.word
+  }));
+}
+
+function generatePhase3Questions() {
+  const qs = [];
+  
+  // Sentence completion MCQ with specific words
+  const sentenceData = [
+    { vocab: VOCAB.find(v=>v.word==='sophisticated'), sentence:"Highly ______ systems are needed in big cities.", options:["simple","sophisticated","basic","poor"] },
+    { vocab: VOCAB.find(v=>v.word==='discharge'), sentence:"Factories ______ waste into rivers every day.", options:["discharge","dispose","decorate","design"] },
+    { vocab: VOCAB.find(v=>v.word==='accelerate'), sentence:"Urbanization ______ the need for sanitation.", options:["delayed","accelerated","reduced","ignored"] },
+    { vocab: VOCAB.find(v=>v.word==='drastic'), sentence:"There has been a ______ improvement in public health.", options:["minor","drastic","small","slight"] },
+    { vocab: VOCAB.find(v=>v.word==='tremendous'), sentence:"The epidemic was a ______ challenge for public health.", options:["minor","tremendous","small","slight"] },
+  ];
+  
+  sentenceData.forEach(s => {
+    if(s.vocab) qs.push({ type:'sentence_mcq', vocab: s.vocab, question: s.sentence, options: s.options, answer: s.vocab.word });
+  });
+  
+  // Add remaining words as fill-in or MCQ to reach 30 total
+  const usedInSentence = new Set(sentenceData.map(s => s.vocab?.id));
+  const remaining = VOCAB.filter(v => !usedInSentence.has(v.id));
+  
+  remaining.forEach(v => {
+    qs.push({ type:'fill', vocab: v, question:`(${v.pos}) ${v.viMeaning}`, answer: v.word });
+  });
+  
+  return shuffle(qs);
+}
+
+function generatePhase4Questions() {
+  const qs = [];
+  
+  // Matching pairs - MCQ based on meaning
+  const matchPool = VOCAB.slice(0, 10); // First 10 words
+  matchPool.forEach(v => {
+    const dists = shuffle(VOCAB.filter(x=>x.id!==v.id)).slice(0,3);
+    const opts = shuffle([v,...dists]);
+    qs.push({ type:'mcq', vocab: v, question:`"${v.example}" — Từ "${v.word}" có nghĩa là gì?`, options: [v.viMeaning, ...dists.map(d=>d.viMeaning)].sort(()=>Math.random()-0.5), answer: v.viMeaning });
+  });
+  
+  // Synonym matching
+  const synPool = VOCAB.filter(v=>v.synonyms.length>0).slice(0,5);
+  synPool.forEach(v => {
+    const wrongSyns = shuffle(VOCAB.filter(x=>x.id!==v.id)).slice(0,3).map(x=>x.synonyms[0]||x.word);
+    const correctSyn = v.synonyms[0];
+    const opts = shuffle([correctSyn,...wrongSyns]);
+    qs.push({ type:'mcq', vocab: v, question:`Synonym của "${v.word}" là gì?`, options: opts, answer: correctSyn });
+  });
+  
+  // Fill in - remaining words
+  const usedIds = new Set();
+  qs.forEach(q => usedIds.add(q.vocab.id));
+  const remaining = VOCAB.filter(v => !usedIds.has(v.id));
+  remaining.forEach(v => {
+    qs.push({ type:'fill', vocab: v, question:`(${v.pos}) ${v.viMeaning}`, answer: v.word });
+  });
+  
+  return shuffle(qs).slice(0, 30); // Ensure exactly 30 questions
+}
+
+// ===== RENDER QUESTION =====
+function renderQuestion() {
+  const area = document.getElementById('question-area');
+  const explArea = document.getElementById('explanation-area');
+  const nextArea = document.getElementById('next-btn-area');
+  explArea.classList.add('hidden');
+  nextArea.classList.add('hidden');
+  state.answered = false;
+
+  const q = state.questions[state.questionIndex];
+  if (!q) { endPhase(); return; }
+
+  document.getElementById('phase-label').textContent = `${PHASE_ICONS[state.phase]} ${PHASE_NAMES[state.phase]}`;
+  document.getElementById('question-counter').textContent = `Câu ${state.questionIndex+1}/${state.questions.length}`;
+  updateProgress();
+  updateStats();
+
+  if (q.type === 'mcq' || q.type === 'sentence_mcq') {
+    area.innerHTML = `
+      <div class="glass-card rounded-2xl p-6 card-shadow w-full anim-pop">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-600 text-sky-400 bg-sky-50 px-2 py-1 rounded-full">${q.vocab.pos}</span>
+          <button onclick="speak('${q.vocab.word.replace(/'/g,"\\'")}')" class="text-sky-400 hover:text-sky-600 p-1" title="Nghe phát âm">🔊</button>
+        </div>
+        <p class="text-lg font-700 text-sky-900 mb-1">${q.question}</p>
+        ${q.vocab.ipa ? `<p class="text-xs text-sky-400 mb-4">${q.vocab.ipa}</p>` : '<div class="mb-4"></div>'}
+        <div class="space-y-2" id="options-container">
+          ${q.options.map((opt, i) => `
+            <button onclick="checkMCQ(this,'${opt.replace(/'/g,"\\'")}','${q.answer.replace(/'/g,"\\'")}')" class="btn-option w-full text-left px-4 py-3 rounded-xl border-2 border-sky-100 bg-white hover:border-sky-300 hover:bg-sky-50 font-600 text-sky-800 transition-all">
+              <span class="text-sky-400 font-700 mr-2">${String.fromCharCode(65+i)}.</span> ${opt}
+            </button>
+          `).join('')}
+        </div>
+      </div>`;
+  } else if (q.type === 'fill') {
+    area.innerHTML = `
+      <div class="glass-card rounded-2xl p-6 card-shadow w-full anim-pop">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-600 text-pink-400 bg-pink-50 px-2 py-1 rounded-full">${q.vocab.pos}</span>
+          <button onclick="speak('${q.vocab.word.replace(/'/g,"\\'")}')" class="text-sky-400 hover:text-sky-600 p-1" title="Nghe phát âm">🔊</button>
+        </div>
+        <p class="text-lg font-700 text-sky-900 mb-1">${q.question}</p>
+        ${q.vocab.ipa ? `<p class="text-xs text-sky-400 mb-4">${q.vocab.ipa}</p>` : '<div class="mb-4"></div>'}
+        <div class="flex gap-2">
+          <input id="fill-input" type="text" class="flex-1 px-4 py-3 rounded-xl border-2 border-sky-200 focus:border-sky-400 focus:outline-none font-600 text-sky-800" placeholder="Nhập từ tiếng Anh..." autocomplete="off" onkeydown="if(event.key==='Enter')checkFill()">
+          <button onclick="checkFill()" class="bg-sky-500 hover:bg-sky-600 text-white font-700 px-5 py-3 rounded-xl transition-all">OK</button>
+        </div>
+        <div id="fill-hint" class="mt-2 text-xs text-sky-400 cursor-pointer hover:text-sky-600" onclick="showHint()">💡 Gợi ý</div>
+      </div>`;
+    setTimeout(()=>{ const inp = document.getElementById('fill-input'); if(inp) inp.focus(); }, 100);
+  }
+  setTimeout(()=>lucide.createIcons(),50);
+}
+
+function showHint() {
+  const q = state.questions[state.questionIndex];
+  const hint = q.answer[0] + '_'.repeat(q.answer.length - 1);
+  document.getElementById('fill-hint').textContent = `💡 ${hint} (${q.answer.length} chữ cái)`;
+}
+
+// ===== CHECK ANSWERS =====
+function checkMCQ(btn, selected, correct) {
+  if (state.answered) return;
+  state.answered = true;
+  const isCorrect = selected.toLowerCase().trim() === correct.toLowerCase().trim();
+  const allBtns = document.querySelectorAll('#options-container .btn-option');
+
+  allBtns.forEach(b => {
+    b.disabled = true;
+    const bText = b.textContent.trim().substring(3).trim();
+    if (bText === correct) {
+      b.classList.remove('border-sky-100','bg-white');
+      b.classList.add('border-emerald-400','bg-emerald-50','text-emerald-700','anim-correct-glow');
+    } else if (b === btn && !isCorrect) {
+      b.classList.remove('border-sky-100','bg-white');
+      b.classList.add('border-red-400','bg-red-50','text-red-700','anim-wrong-glow','anim-wrong-shake');
+    } else {
+      b.classList.add('opacity-50');
+    }
+  });
+
+  handleAnswer(isCorrect);
+}
+
+function checkFill() {
+  if (state.answered) return;
+  const q = state.questions[state.questionIndex];
+  const input = document.getElementById('fill-input');
+  const val = input.value.trim().toLowerCase();
+  const correct = q.answer.toLowerCase();
+  const isCorrect = val === correct;
+
+  state.answered = true;
+  input.disabled = true;
+
+  if (isCorrect) {
+    input.classList.remove('border-sky-200');
+    input.classList.add('border-emerald-400','bg-emerald-50','anim-correct-glow');
+  } else {
+    input.classList.remove('border-sky-200');
+    input.classList.add('border-red-400','bg-red-50','anim-wrong-shake');
+    const correctEl = document.createElement('div');
+    correctEl.className = 'mt-2 text-sm font-700 text-emerald-600 anim-pop';
+    correctEl.textContent = `Đáp án đúng: ${q.answer}`;
+    input.parentElement.after(correctEl);
+  }
+
+  handleAnswer(isCorrect);
+}
+
+function handleAnswer(isCorrect) {
+  const q = state.questions[state.questionIndex];
+  state.questionsAnswered++;
+
+  if (isCorrect) {
+    state.correct++;
+    state.streak++;
+    if (state.streak > state.maxStreak) state.maxStreak = state.streak;
+    const basePoints = 10;
+    const streakBonus = Math.min(state.streak - 1, 5) * 2;
+    state.score += basePoints + streakBonus;
+    playCorrectSound();
+    createConfetti();
+    if (state.streak >= 3) {
+      playStreakSound();
+      showToast(`🔥 Combo x${state.streak}! +${streakBonus} bonus`, 'streak');
+      document.getElementById('streak-icon').className = 'text-lg anim-streak';
+    } else {
+      showToast('✅ Chính xác!', 'success');
+    }
+  } else {
+    state.streak = 0;
+    state.wrong++;
+    if (!state.wrongWords.find(w => w.id === q.vocab.id)) {
+      state.wrongWords.push(q.vocab);
+    }
+    if (state.questionIndex + 3 < state.questions.length) {
+      // Already has questions ahead
+    } else {
+      state.flashcardQueue.push(q.vocab);
+    }
+    playWrongSound();
+    showToast('❌ Chưa đúng rồi!', 'error');
+  }
+
+  updateStats();
+  showExplanation(q);
+  document.getElementById('next-btn-area').classList.remove('hidden');
+  autoSaveProgress();
+
+  if (state.questionsAnswered % 5 === 0 && state.wrongWords.length > 0) {
+    state.flashcardShown = 0;
+  }
+}
+
+function showExplanation(q) {
+  const v = q.vocab;
+  const area = document.getElementById('explanation-area');
+  area.classList.remove('hidden');
+  
+  // Enhanced English definitions
+  const englishMeaning = (() => {
+    const meanings = {
+      'hygiene': 'conditions and practices conducive to maintaining health and preventing disease; cleanliness',
+      'personal hygiene': 'daily practices that keep your body and clothes clean, including bathing, hand washing, and oral care',
+      'poor sanitary conditions': 'unhygienic and unclean environments that may lead to health hazards and disease spread',
+      'drain': 'a pipe, tube, or channel that carries away sewage, excess water, or other waste materials from a building or area',
+      'down the drain': 'wasted or lost without benefit; money or effort that produces no positive results',
+      'mentally drained': 'emotionally exhausted and depleted of mental energy due to stress or intense cognitive work',
+      'physically drained': 'physically exhausted; depleted of physical energy and stamina',
+      'sophisticated': 'highly developed, complex, and refined; showing advanced knowledge, technology, or social refinement',
+      'complex': 'composed of many interconnected parts; complicated and difficult to understand or analyze',
+      'intricate': 'very detailed and complicated; having many small or delicate parts that fit together precisely',
+      'occupant': 'a person residing or having a position in a place, room, building, or territory',
+      'resident': 'a person who lives permanently or for an extended period in a particular place',
+      'dweller': 'a person who lives or resides in a particular place or type of environment',
+      'settler': 'a person who moves to a new region to establish a home or community, often in a previously unsettled area',
+      'inhabitant': 'a person who lives in or occupies a place; a permanent or long-term resident',
+      'citizen': 'a legally recognized member of a state or nation who is entitled to its rights and protections',
+      'tenant': 'a person who rents and occupies land or property from a landlord or property owner',
+      'life expectancy': 'the average number of years a person born in a particular year is expected to live',
+      'lifespan': 'the period of time that an organism or object exists or is estimated to exist',
+      'longevity': 'a long duration of life or existence; great length or duration of living',
+      'discharge': 'to release, expel, or emit a substance; to allow to flow out or escape',
+      'dispose of': 'to get rid of something unwanted; to throw away, discard, or deal with waste properly',
+      'discard': 'to throw away; to reject or abandon something no longer wanted or needed',
+      'tremendous': 'extremely large in amount, scale, or intensity; very impressive or significant',
+      'drastic': 'sudden and violent; involving major or extreme changes; severe and decisive',
+      'descendant': 'a person who is descended from an ancestor; offspring or a member of a later generation',
+      'crop yield': 'the total amount of agricultural produce harvested from a given area of land in a season',
+      'cannibalism': 'the practice of eating the flesh or consuming the body parts of members of one\'s own species',
+      'worst-case scenario': 'the most unfavorable or negative outcome that could possibly occur in a situation',
+      'accelerate': 'to increase in speed or rate; to cause something to happen faster or sooner',
+    };
+    return meanings[v.word] || 'Advanced vocabulary word';
+  })();
+
+  // Enhanced collocations
+  const collocation = (() => {
+    const colls = {
+      'hygiene': 'personal hygiene, hygiene standards, dental hygiene, food hygiene, poor hygiene, maintain hygiene',
+      'personal hygiene': 'maintain personal hygiene, improve personal hygiene, basic personal hygiene, personal hygiene practices',
+      'poor sanitary conditions': 'poor sanitary conditions lead to, address poor sanitary conditions, improve sanitary conditions',
+      'drain': 'drainage system, drain pipe, blocked drain, clear the drain, down the drain, go down the drain',
+      'down the drain': 'go down the drain, money down the drain, pour money down the drain, waste down the drain',
+      'mentally drained': 'feel mentally drained, become mentally drained, leave someone mentally drained',
+      'physically drained': 'feel physically drained, become physically drained, leave someone physically drained',
+      'sophisticated': 'sophisticated technology, sophisticated system, highly sophisticated, sophisticated design, sophisticated equipment',
+      'complex': 'complex system, highly complex, complex process, complex network, complex solution',
+      'intricate': 'intricate design, intricate pattern, intricate details, intricate system, intricate process',
+      'occupant': 'building occupants, room occupants, rightful occupants, current occupants, occupant of',
+      'resident': 'long-term resident, permanent resident, resident of, local resident, resident population',
+      'dweller': 'city dweller, cave dweller, tree dweller, urban dweller, dweller in',
+      'settler': 'early settler, first settler, settler of, settler community, settler population',
+      'inhabitant': 'inhabitant of, native inhabitant, original inhabitant, inhabitant population',
+      'citizen': 'active citizen, good citizen, ordinary citizen, foreign citizen, citizen of, citizenship rights',
+      'tenant': 'tenant rights, tenant farmer, long-term tenant, resident tenant, tenant agreement',
+      'life expectancy': 'increase in life expectancy, average life expectancy, life expectancy rate, life expectancy rises',
+      'lifespan': 'human lifespan, average lifespan, lifespan of, product lifespan, lifespan increases',
+      'longevity': 'human longevity, increase longevity, promote longevity, longevity of life',
+      'discharge': 'discharge water, discharge waste, discharge into, discharge from, industrial discharge',
+      'dispose of': 'dispose of waste, properly dispose of, dispose of safely, dispose of responsibly',
+      'discard': 'discard waste, discard of, completely discard, never discard, discard into',
+      'tremendous': 'tremendous impact, tremendous growth, tremendous progress, tremendous change, tremendous importance',
+      'drastic': 'drastic change, drastic measures, drastic reduction, drastic improvement, drastic action',
+      'descendant': 'direct descendant, distant descendant, descendant of, future descendants, descendant generation',
+      'crop yield': 'increase crop yield, improve crop yield, average crop yield, maximize crop yield, crop yield increases',
+      'cannibalism': 'practice of cannibalism, act of cannibalism, engage in cannibalism, instances of cannibalism',
+      'worst-case scenario': 'in worst case scenario, worst case scenario is, worst case scenario: prepare for, worst case scenario involves',
+      'accelerate': 'accelerate growth, accelerate change, accelerate process, accelerate development, accelerate progress',
+    };
+    return colls[v.word] || 'Common word combinations';
+  })();
+
+  // Usage & grammar notes
+  const usage = (() => {
+    const usages = {
+      'hygiene': 'Noun (uncountable). Usually combined with adjectives (personal, public, food, dental hygiene). Cannot be pluralized. Formal and academic contexts.',
+      'personal hygiene': 'Noun phrase (uncountable). Refers to daily health practices. Used in health, medical, and educational contexts.',
+      'poor sanitary conditions': 'Noun phrase describing environmental state. Often used in health and development contexts. Can take modifiers.',
+      'drain': 'Can be noun or verb. As noun: usually plural "drains". Phrase "down the drain" means wasted or lost.',
+      'down the drain': 'Idiomatic phrase (countable usage). Used metaphorically. Cannot be modified; always uses this exact form.',
+      'mentally drained': 'Adjective phrase. Describes emotional/mental state. Used predicatively (is mentally drained) or attributively (mentally drained person).',
+      'physically drained': 'Adjective phrase. Describes physical state. Used predicatively (is physically drained) or attributively (physically drained athletes).',
+      'sophisticated': 'Adjective. Predicative (is sophisticated) or attributive (sophisticated system). Comparative: more sophisticated; Superlative: most sophisticated.',
+      'complex': 'Adjective (can also be noun in technical use). Comparative: more complex; Superlative: most complex. Formal and technical contexts.',
+      'intricate': 'Adjective. Predicative or attributive. Emphasizes detailed complexity. Comparative: more intricate; Superlative: most intricate.',
+      'occupant': 'Noun (countable). Plural: occupants. Often used in formal/legal/official contexts. Example: "The occupants must evacuate."',
+      'resident': 'Noun (countable). Plural: residents. Can combine with descriptors (permanent, temporary). Common in legal and administrative use.',
+      'dweller': 'Noun (countable). Plural: dwellers. Often combined with location (city dweller, cave dweller). Less formal than resident.',
+      'settler': 'Noun (countable). Plural: settlers. Historical/geographical contexts. Refers to those who establish communities.',
+      'inhabitant': 'Noun (countable). Plural: inhabitants. Formal term for residents. Often used in descriptive or geographical contexts.',
+      'citizen': 'Noun (countable). Plural: citizens. Can combine with nationalities (British citizen, American citizen). Legal and civic contexts.',
+      'tenant': 'Noun (countable). Plural: tenants. Common in legal/real estate contexts. Opposite: landlord. Example: "tenant agreement".',
+      'life expectancy': 'Noun phrase (countable/uncountable). Usually used with "the" or possessive (your life expectancy). Takes modifiers (average, high, low).',
+      'lifespan': 'Noun (countable). Plural: lifespans. Can refer to humans, animals, or objects (lifespan of a building). Biological/technical contexts.',
+      'longevity': 'Noun (uncountable). Formal/academic term. Cannot be pluralized. Often used in medical/biological/sociological contexts.',
+      'discharge': 'Verb (transitive/intransitive) or Noun. As verb: discharge (something) into. Medical/legal/environmental contexts.',
+      'dispose of': 'Phrasal verb (transitive). Must have an object. Passive form: "waste is disposed of". No single-word replacement.',
+      'discard': 'Verb (transitive). Must have an object. Simpler, more direct than "dispose of". Can be used in all contexts.',
+      'tremendous': 'Adjective. Can be attributive (tremendous impact) or predicative (it is tremendous). Formal style often replaces with "significant/major".',
+      'drastic': 'Adjective. Predicative or attributive. Implies severity and sudden change. Comparative: more drastic; Superlative: most drastic.',
+      'descendant': 'Noun (countable). Plural: descendants. Can be used as adjective (descendant species). Genealogical/biological contexts.',
+      'crop yield': 'Noun phrase (countable). Can be singular "yield" or "crop yield". Agricultural/economic contexts. Takes modifiers (average, total, annual).',
+      'cannibalism': 'Noun (uncountable). Abstract noun. Typically academic/formal use. Refers to cultural practice or biological behavior.',
+      'worst-case scenario': 'Noun phrase (countable). Plural: worst-case scenarios. Used to introduce hypothetical negative outcome. Opposite: best-case scenario.',
+      'accelerate': 'Verb (transitive/intransitive). Can take direct object (accelerate growth) or no object (accelerate). Present participle: accelerating.',
+    };
+    return usages[v.word] || 'Advanced usage';
+  })();
+
+  area.innerHTML = `
+    <div class="glass-card rounded-2xl p-5 card-shadow anim-slide-up border-l-4 border-emerald-400">
+      <!-- Word Header with Pronunciation -->
+      <div class="flex items-center gap-2 mb-4 flex-wrap">
+        <span class="text-2xl font-800 text-emerald-600">${v.word}</span>
+        <span class="text-xs text-emerald-400 font-600 italic">${v.ipa || ''}</span>
+        <button onclick="speak('${v.word.replace(/'/g,"\\'")}')" class="text-emerald-400 hover:text-emerald-600 ml-auto p-1 hover:bg-emerald-50 rounded-lg transition-all" title="Click to hear pronunciation">
+          🔊 Nghe phát âm
+        </button>
+      </div>
+
+      <!-- Grammar & Usage Rules -->
+      <div class="bg-emerald-50 rounded-lg p-3 mb-4 border border-emerald-200">
+        <p class="text-xs font-600 text-emerald-600 mb-1">📌 Loại từ & Cách dùng:</p>
+        <p class="text-xs text-emerald-700 leading-relaxed">${usage}</p>
+      </div>
+
+      <!-- Bilingual Meanings -->
+      <div class="space-y-3 mb-4">
+        <div>
+          <p class="text-xs font-700 text-sky-600 mb-1">🇻🇳 Tiếng Việt:</p>
+          <p class="text-sm text-sky-800 font-600 leading-relaxed">${v.viMeaning}</p>
+        </div>
+        <div>
+          <p class="text-xs font-700 text-sky-600 mb-1">🌍 English Definition:</p>
+          <p class="text-sm text-sky-800 leading-relaxed">${englishMeaning}</p>
+        </div>
+      </div>
+
+      <!-- Synonyms with context -->
+      <div class="bg-pink-50 rounded-lg p-3 mb-4 border border-pink-200">
+        <p class="text-xs font-700 text-pink-600 mb-1">🔄 Từ đồng nghĩa (Synonyms):</p>
+        <div class="flex flex-wrap gap-2 mt-2">
+          ${v.synonyms.map(syn => `<span class="bg-white text-pink-600 text-xs font-600 px-2.5 py-1 rounded-lg border border-pink-200">→ ${syn}</span>`).join('')}
+        </div>
+      </div>
+
+      <!-- Word Family - Related Forms -->
+      <div class="bg-orange-50 rounded-lg p-3 mb-4 border border-orange-200">
+        <p class="text-xs font-700 text-orange-600 mb-1">👨‍👩‍👧‍👦 Họ từ (Word Family):</p>
+        <div class="flex flex-wrap gap-2 mt-2">
+          ${v.wordFamily.map(wf => `<span class="bg-white text-orange-600 text-xs font-600 px-2.5 py-1 rounded-lg border border-orange-200">${wf}</span>`).join('')}
+        </div>
+      </div>
+
+      <!-- Collocations - Common phrases -->
+      <div class="bg-purple-50 rounded-lg p-3 mb-4 border border-purple-200">
+        <p class="text-xs font-700 text-purple-600 mb-1">🔗 Cách dùng trong câu (Collocation):</p>
+        <p class="text-xs text-purple-700 leading-relaxed mt-1">${collocation}</p>
+      </div>
+
+      <!-- IELTS Example with Full Translation -->
+      <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
+        <p class="text-xs font-700 text-blue-600 mb-2">📖 Ví dụ IELTS (IELTS Example):</p>
+        <p class="text-sm italic text-blue-800 mb-3 font-600 leading-relaxed">"${v.example}"</p>
+        
+        <div class="text-xs text-blue-700 bg-white rounded p-3 border border-blue-100">
+          <p class="font-700 text-blue-600 mb-2">📝 Dịch sang Tiếng Việt:</p>
+          <p class="leading-relaxed">"${(() => {
+            const translations = {
+              'hygiene': 'Vệ sinh cá nhân tốt giúp ngăn chặn sự lây lan của nhiễm trùng.',
+              'personal hygiene': 'Vệ sinh cá nhân tốt bao gồm đánh răng và rửa tay thường xuyên.',
+              'poor sanitary conditions': 'Điều kiện vệ sinh tồi tàn có thể dẫn đến các bệnh nghiêm trọng.',
+              'drain': 'Các cống của thành phố bị tắc, gây ra lũ lụt.',
+              'down the drain': 'Tất cả các nỗ lực của chính phủ đều bị lãng phí.',
+              'mentally drained': 'Sau kỳ thi, học sinh cảm thấy kiệt sức về tinh thần.',
+              'physically drained': 'Công nhân cảm thấy kiệt sức về thể chất sau một ngày dài.',
+              'sophisticated': 'Các thành phố hiện đại dựa vào cơ sở hạ tầng tiên tiến.',
+              'complex': 'Hệ thống thoát nước là rất phức tạp.',
+              'intricate': 'Thiết kế phức tạp của hệ thống nước mất nhiều năm để phát triển.',
+              'occupant': 'Những cư dân của tòa nhà đã được sơ tán trong đám cháy.',
+              'resident': 'Cư dân phàn nàn về chất lượng nước kém.',
+              'dweller': 'Cư dân thành phố phải đối mặt với nhiều thách thức liên quan đến vệ sinh.',
+              'settler': 'Những người định cư sớm xây dựng những hệ thống thoát nước đầu tiên.',
+              'inhabitant': 'Cư dân của vùng nông thôn thường thiếu tiếp cận vệ sinh sinh.',
+              'citizen': 'Mỗi công dân có quyền tiếp cận nước sạch.',
+              'tenant': 'Những người thuê nhà phàn nàn về điều kiện vệ sinh tồi tàn.',
+              'life expectancy': 'Tuổi thọ trung bình tăng lên đáng kể nhờ hệ thống vệ sinh tốt hơn.',
+              'lifespan': 'Tuổi thọ của những chiếc ống này khoảng 50 năm.',
+              'longevity': 'Vệ sinh cải thiện đã góp phần vào sự trường thọ của con người.',
+              'discharge': 'Các nhà máy xả chất thải ra sông hàng ngày.',
+              'dispose of': 'Chất thải phải được xử lý một cách hợp lý để bảo vệ môi trường.',
+              'discard': 'Mọi người không nên vứt bỏ nhựa vào các lối nước.',
+              'tremendous': 'Vệ sinh đã mang lại những thay đổi to lớn cho cuộc sống đô thị.',
+              'drastic': 'Đã có những cải tiến to lớn trong y tế công cộng.',
+              'descendant': 'Những hậu duệ của những người định cư sớm được hưởng lợi từ vệ sinh cải thiện.',
+              'crop yield': 'Tưới tiêu tốt hơn làm tăng năng suất hoa màu đáng kể.',
+              'cannibalism': 'Ăn thịt đồng loại được thực hành trong một số xã hội cổ đại.',
+              'worst-case scenario': 'Trong trường hợp tệ nhất, hàng ngàn người có thể mất tiếp cận nước sạch.',
+              'accelerate': 'Đô thị hóa đẩy nhanh nhu cầu vệ sinh tốt hơn.',
+            };
+            return translations[v.word] || 'Xem ví dụ tiếng Anh phía trên';
+          })()}"</p>
+        </div>
+      </div>
+    </div>`;
+}
+
+function retryQuestion() {
+  state.answered = false;
+  state.questionsAnswered--;
+  if (state.correct > 0) state.correct--;
+  autoSaveProgress();
+  renderQuestion();
+}
+
+function autoSaveProgress() {
+  saveGameState();
+  savePhaseProgress();
+}
+
+// ===== NEXT QUESTION =====
+function nextQuestion() {
+  // Check if we need to show flashcard review
+  if (state.questionsAnswered % 5 === 0 && state.wrongWords.length > 0 && state.flashcardShown < state.wrongWords.length) {
+    showFlashcard();
+    return;
+  }
+
+  state.questionIndex++;
+  if (state.questionIndex >= state.questions.length) {
+    endPhase();
+  } else {
+    renderQuestion();
+  }
+}
+
+// ===== FLASHCARD REVIEW =====
+function showFlashcard() {
+  const overlay = document.getElementById('flashcard-overlay');
+  const content = document.getElementById('flashcard-content');
+  const wordsToReview = state.wrongWords.slice(0, 3);
+  const idx = state.flashcardShown;
+
+  if (idx >= wordsToReview.length) {
+    overlay.classList.add('hidden');
+    state.flashcardShown = 0;
+    state.questionIndex++;
+    if (state.questionIndex >= state.questions.length) endPhase();
+    else renderQuestion();
+    return;
+  }
+
+  const v = wordsToReview[idx];
+  overlay.classList.remove('hidden');
+  content.innerHTML = `
+    <div class="text-center">
+      <p class="text-xs font-600 text-pink-400 mb-2">🔁 Ôn lại từ sai (${idx+1}/${wordsToReview.length})</p>
+      <div class="text-4xl mb-3 anim-float">💡</div>
+      <h3 class="heading-font text-2xl font-800 text-sky-800 mb-1">${v.word}</h3>
+      <p class="text-xs text-sky-400 mb-3">${v.ipa || ''} <button onclick="speak('${v.word.replace(/'/g,"\\'")}')" class="ml-1">🔊</button></p>
+      <p class="text-sky-700 font-600 mb-2">(${v.pos}) ${v.viMeaning}</p>
+      <div class="text-left text-sm space-y-1 bg-sky-50 rounded-lg p-3 mb-4">
+        <p><span class="font-700 text-emerald-600">Synonyms:</span> ${v.synonyms.join(', ')}</p>
+        <p><span class="font-700 text-pink-500">Word family:</span> ${v.wordFamily.join(', ')}</p>
+        <p class="italic text-sky-600 mt-1">"${v.example}"</p>
+      </div>
+      <button onclick="state.flashcardShown++;showFlashcard();" class="bg-sky-500 hover:bg-sky-600 text-white font-700 px-6 py-2 rounded-xl transition-all">
+        ${idx + 1 < wordsToReview.length ? 'Từ tiếp theo →' : 'Tiếp tục chơi →'}
+      </button>
+    </div>`;
+}
+
+// ===== PHASE MANAGEMENT =====
+function endPhase() {
+  savePhaseProgress();
+  // Show option to continue to next phase or return to menu
+  const nextPhase = state.phase + 1;
+  if (nextPhase < 4) {
+    const goNext = confirm(`Phần ${state.phase + 1} hoàn thành!\n\nBấm OK để chơi Phần ${nextPhase + 1}, hoặc Hủy để quay lại Menu.`);
+    if (goNext) {
+      startPhase(nextPhase);
+    } else {
+      clearGameState();
+      openMainMenu();
+    }
+  } else {
+    // All phases completed
+    showResults();
+  }
+}
+
+function generateCurrentPhaseQuestions() {
+  switch(state.phase) {
+    case 0: state.questions = generatePhase1Questions(); break;
+    case 1: state.questions = generatePhase2Questions(); break;
+    case 2: state.questions = generatePhase3Questions(); break;
+    case 3: state.questions = generatePhase4Questions(); break;
+  }
+  state.totalQuestions += state.questions.length;
+}
+
+// ===== PROGRESS & STATS =====
+function updateProgress() {
+  const total = state.totalQuestions || 1;
+  const pct = Math.min((state.questionsAnswered / total) * 100, 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+}
+
+function updateStats() {
+  document.getElementById('streak-count').textContent = state.streak;
+  const scoreEl = document.getElementById('score-display');
+  scoreEl.textContent = state.score;
+  scoreEl.style.transform = 'scale(1.3)';
+  setTimeout(() => scoreEl.style.transform = 'scale(1)', 200);
+}
+
+// ===== RESULTS =====
+function showResults() {
+  savePhaseProgress();
+  clearGameState();
+  showScreen('screen-result');
+  const pct = state.correct + state.wrong > 0 ? Math.round((state.correct / (state.correct + state.wrong)) * 100) : 0;
+  let rank, rankEmoji;
+  if (pct >= 90) { rank = 'Vocabulary Master'; rankEmoji = '👑'; }
+  else if (pct >= 75) { rank = 'Word Expert'; rankEmoji = '🏆'; }
+  else if (pct >= 60) { rank = 'Good Learner'; rankEmoji = '⭐'; }
+  else if (pct >= 40) { rank = 'Explorer'; rankEmoji = '🧭'; }
+  else { rank = 'Beginner'; rankEmoji = '🌱'; }
+
+  const content = document.getElementById('result-content');
+  content.innerHTML = `
+    <div class="glass-card rounded-2xl p-8 card-shadow">
+      <div class="text-6xl mb-4 anim-badge">${rankEmoji}</div>
+      <h2 class="heading-font text-3xl font-900 text-sky-800 mb-1">Hoàn thành!</h2>
+      <p class="text-sky-500 font-600 mb-6">${rank}</p>
+
+      <div class="grid grid-cols-2 gap-4 mb-6 text-center">
+        <div class="bg-sky-50 rounded-xl p-4">
+          <div class="text-2xl font-800 text-sky-700">${state.score}</div>
+          <div class="text-xs text-sky-400 font-600">⭐ Điểm</div>
+        </div>
+        <div class="bg-emerald-50 rounded-xl p-4">
+          <div class="text-2xl font-800 text-emerald-600">${pct}%</div>
+          <div class="text-xs text-emerald-400 font-600">✅ Chính xác</div>
+        </div>
+        <div class="bg-orange-50 rounded-xl p-4">
+          <div class="text-2xl font-800 text-orange-500">${state.maxStreak}</div>
+          <div class="text-xs text-orange-400 font-600">🔥 Max Combo</div>
+        </div>
+        <div class="bg-pink-50 rounded-xl p-4">
+          <div class="text-2xl font-800 text-pink-500">${state.correct}/${state.correct+state.wrong}</div>
+          <div class="text-xs text-pink-400 font-600">📝 Câu đúng</div>
+        </div>
+      </div>
+
+      ${state.wrongWords.length > 0 ? `
+      <div class="bg-red-50 rounded-xl p-4 mb-4 text-left">
+        <p class="font-700 text-red-600 text-sm mb-2">📌 Từ cần ôn lại:</p>
+        <div class="flex flex-wrap gap-2">
+          ${state.wrongWords.map(w => `<span class="bg-white text-red-600 text-xs font-600 px-2 py-1 rounded-lg border border-red-200">${w.word}</span>`).join('')}
+        </div>
+      </div>` : ''}
+
+      <div class="flex gap-3 justify-center flex-wrap">
+        <button onclick="openMainMenu()" class="bg-sky-500 hover:bg-sky-600 text-white font-700 px-6 py-3 rounded-xl transition-all">🎮 Menu chọn phần</button>
+        <button onclick="showScreen('screen-review')" class="bg-white border-2 border-sky-300 text-sky-600 font-700 px-6 py-3 rounded-xl hover:bg-sky-50 transition-all">📖 Xem từ vựng</button>
+      </div>
+    </div>`;
+}
+
+// ===== VOCAB LIST =====
+function renderVocabList() {
+  const container = document.getElementById('vocab-list');
+  container.innerHTML = VOCAB.map(v => `
+    <div class="glass-card rounded-xl p-4 card-shadow">
+      <div class="flex items-center justify-between mb-2">
+        <div class="flex items-center gap-2">
+          <span class="heading-font text-lg font-800 text-sky-800">${v.word}</span>
+          <span class="text-xs text-sky-400">${v.ipa||''}</span>
+          <button onclick="speak('${v.word.replace(/'/g,"\\'")}')" class="text-sky-400 hover:text-sky-600">🔊</button>
+        </div>
+        <span class="text-xs font-600 text-pink-400 bg-pink-50 px-2 py-0.5 rounded-full">${v.pos}</span>
+      </div>
+      <p class="text-sm text-sky-700 font-600 mb-1">${v.viMeaning}</p>
+      <div class="text-xs text-sky-500 space-y-0.5">
+        <p><span class="font-700 text-emerald-500">Syn:</span> ${v.synonyms.join(', ')}</p>
+        <p><span class="font-700 text-pink-400">Family:</span> ${v.wordFamily.join(', ')}</p>
+        <p class="italic text-sky-400">"${v.example}"</p>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ===== START GAME =====
+function startGame() {
+  clearGameState();
+  // Check if user has any saved progress
+  const progress = loadPhaseProgress();
+  const hasProgress = Object.values(progress).some(p => p > 0);
+  
+  if (hasProgress) {
+    const resume = confirm('Bạn có tiến độ đã lưu.\n\nBấm OK để xem menu chọn phần, hoặc Hủy để bắt đầu từ đầu.');
+    if (resume) {
+      openMainMenu();
+    } else {
+      localStorage.removeItem(PHASES_PROGRESS_KEY);
+      openMainMenu();
+    }
+  } else {
+    openMainMenu();
+  }
+}
+
+// ===== ELEMENT SDK =====
+const defaultConfig = {
+  game_title: "TỪ MỚI READING 1A",
+  subtitle: "Buổi 1 – Khám phá từ vựng IELTS Reading",
+  background_color: "#0ea5e9",
+  surface_color: "#ffffff",
+  text_color: "#0c4a6e",
+  accent_color: "#ec4899",
+  secondary_action_color: "#38bdf8",
+  font_family: "Nunito",
+  font_size: 16,
+};
+
+function applyConfig(config) {
+  const bg = config.background_color || defaultConfig.background_color;
+  const surface = config.surface_color || defaultConfig.surface_color;
+  const text = config.text_color || defaultConfig.text_color;
+  const accent = config.accent_color || defaultConfig.accent_color;
+  const secondary = config.secondary_action_color || defaultConfig.secondary_action_color;
+  const font = config.font_family || defaultConfig.font_family;
+  const size = config.font_size || defaultConfig.font_size;
+
+  document.body.style.background = `linear-gradient(135deg, ${bg} 0%, ${secondary} 30%, #e0f2fe 60%, #fdf2f8 100%)`;
+
+  document.querySelectorAll('.glass-card').forEach(el => {
+    el.style.backgroundColor = surface + 'dd';
+  });
+
+  document.body.style.fontFamily = `${font}, Nunito, sans-serif`;
+  document.body.style.fontSize = size + 'px';
+
+  const titleEl = document.getElementById('el-title');
+  if (titleEl) {
+    titleEl.textContent = config.game_title || defaultConfig.game_title;
+    titleEl.style.color = text;
+    titleEl.style.fontFamily = `${font}, Quicksand, sans-serif`;
+    titleEl.style.fontSize = (size * 2.5) + 'px';
+  }
+  const subEl = document.getElementById('el-subtitle');
+  if (subEl) {
+    subEl.textContent = config.subtitle || defaultConfig.subtitle;
+    subEl.style.color = secondary;
+    subEl.style.fontFamily = `${font}, Quicksand, sans-serif`;
+    subEl.style.fontSize = (size * 1.1) + 'px';
+  }
+}
+
+if (window.elementSdk) {
+  window.elementSdk.init({
+    defaultConfig,
+    onConfigChange: async (config) => { applyConfig(config); },
+    mapToCapabilities: (config) => ({
+      recolorables: [
+        { get: () => config.background_color || defaultConfig.background_color, set: (v) => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); } },
+        { get: () => config.surface_color || defaultConfig.surface_color, set: (v) => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); } },
+        { get: () => config.text_color || defaultConfig.text_color, set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
+        { get: () => config.accent_color || defaultConfig.accent_color, set: (v) => { config.accent_color = v; window.elementSdk.setConfig({ accent_color: v }); } },
+        { get: () => config.secondary_action_color || defaultConfig.secondary_action_color, set: (v) => { config.secondary_action_color = v; window.elementSdk.setConfig({ secondary_action_color: v }); } },
+      ],
+      borderables: [],
+      fontEditable: { get: () => config.font_family || defaultConfig.font_family, set: (v) => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); } },
+      fontSizeable: { get: () => config.font_size || defaultConfig.font_size, set: (v) => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); } },
+    }),
+    mapToEditPanelValues: (config) => new Map([
+      ["game_title", config.game_title || defaultConfig.game_title],
+      ["subtitle", config.subtitle || defaultConfig.subtitle],
+    ]),
+  });
+}
+
+applyConfig(defaultConfig);
+lucide.createIcons();
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9ecca5bd328d4639',t:'MTc3NjI3MzkwNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
